@@ -63,8 +63,6 @@ export class UIManager {
             skipTutorialModal: document.getElementById('skip-tutorial-modal'),
             skipTutorialConfirmBtn: document.getElementById('skip-tutorial-confirm-btn'),
             skipTutorialCancelBtn: document.getElementById('skip-tutorial-cancel-btn'),
-            tutorialLogModal: document.getElementById('tutorial-log-modal'),
-            tutorialLogList: document.getElementById('tutorial-log-list'),
         };
     }
 
@@ -99,15 +97,16 @@ export class UIManager {
 
         // Sub Nav Bar
         const activeSubNav = this.navStructure[activeNav]?.screens || {};
+        const themeClass = `theme-${activeNav}`;
         const subNavButtons = Object.entries(activeSubNav).map(([screenId, screenLabel]) => {
             const isActive = screenId === activeScreen;
             return `
-                <button class="btn ${isActive ? 'btn-header-active' : ''}"
+                <button class="btn btn-sub-nav ${isActive ? 'btn-sub-nav-active' : ''}"
                         data-action="${ACTION_IDS.SET_SCREEN}" data-nav-id="${activeNav}" data-screen-id="${screenId}">
                     ${screenLabel}
                 </button>`;
         }).join('');
-        this.cache.subNavBar.innerHTML = `<div class="flex justify-center w-full gap-2 md:gap-4 mt-3">${subNavButtons}</div>`;
+        this.cache.subNavBar.innerHTML = `<div class="flex justify-center w-full gap-2 md:gap-4 mt-3 ${themeClass}">${subNavButtons}</div>`;
     }
 
     renderActiveScreen(gameState) {
@@ -144,8 +143,8 @@ export class UIManager {
             case SCREEN_IDS.NAVIGATION:
                 const fuelPct = (shipState.fuel / shipStatic.maxFuel) * 100;
                 this.cache.stickyBar.innerHTML = `
-                    <div class="ship-hud p-2 mb-4">
-                        <div class="flex items-center justify-between text-sm">
+                    <div class="ship-hud">
+                        <div class="flex items-center justify-between">
                              <div class="flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-sky-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg>
                                 <span class="text-gray-400">Fuel:</span>
@@ -162,8 +161,8 @@ export class UIManager {
             case SCREEN_IDS.CARGO:
                 const cargoUsed = calculateInventoryUsed(player.inventories[player.activeShipId]);
                 this.cache.stickyBar.innerHTML = `
-                     <div class="ship-hud p-2 mb-4 text-center">
-                        <div class="flex justify-around items-center text-lg font-roboto-mono">
+                     <div class="ship-hud text-center">
+                        <div class="flex justify-around items-center font-roboto-mono">
                             <span>${formatCredits(player.credits)}</span>
                             <span class="text-gray-500">|</span>
                             <span>Cargo: ${cargoUsed}/${shipStatic.cargoCapacity}</span>
@@ -1078,8 +1077,14 @@ export class UIManager {
     }
 
     showTutorialLogModal({ seenBatches, onSelect }) {
-        const logModal = this.cache.tutorialLogModal;
-        const list = this.cache.tutorialLogList;
+        const logModal = document.getElementById('tutorial-log-modal');
+        const list = document.getElementById('tutorial-log-list');
+
+        if (!logModal || !list) {
+            console.error('Tutorial log modal elements not found in DOM.');
+            return;
+        }
+
         list.innerHTML = ''; // Clear previous entries
 
         if (seenBatches.length === 0) {

@@ -38,14 +38,15 @@
     </div>
 
     <main id="game-container" class="game-container p-4 md:p-8 hidden">
-        <header id="header-main" class="relative mb-6 pb-4 border-b-2 border-cyan-900/50">
-            <div id="nav-bar"></div>
-            <div id="sub-nav-bar"></div>
-        </header>
+        <div id="top-bar-container" class="panel-border border border-slate-700">
+            <header id="header-main" class="relative">
+                <div id="nav-bar"></div>
+                <div id="sub-nav-bar"></div>
+            </header>
+            <div id="sticky-bar"></div>
+        </div>
         
-        <div id="sticky-bar"></div>
-
-        <div id="main-content">
+        <div id="main-content" class="mt-6">
             <div id="status-screen" class="screen"></div>
             <div id="navigation-screen" class="screen"></div>
             <div id="services-screen" class="screen"></div>
